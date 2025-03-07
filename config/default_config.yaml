@@ -1,0 +1,86 @@
+# Default configuration template
+# Copy this file and customize it for your specific search
+
+searches:
+    - name: "My Search" # Give your search a descriptive name
+      make: null # Brand name (e.g., "Volkswagen", "BMW", "Audi")
+      models: [] # List of models to search for (e.g., ["T5", "T6"])
+
+      # Price range in EUR
+      price_range:
+          min: null # Minimum price (null = no minimum)
+          max: null # Maximum price (null = no maximum)
+
+      # Registration year
+      year_range:
+          min: null # From year (null = no minimum)
+          max: null # To year (null = no maximum)
+
+      # Mileage
+      max_kilometers: null # Maximum kilometers (null = no limit)
+
+      # Alternative way to specify kilometers range
+      kilometers_range:
+          min: null # Minimum kilometers (null = no minimum)
+          max: null # Maximum kilometers (null = no maximum)
+
+      # Body type codes:
+      # 1 = Limousine, 2 = Van/Kleinbus, 3 = Kombi, 4 = Cabrio, 5 = SUV/Geländewagen
+      # 6 = Sportwagen/Coupé, 7 = Andere
+      body_type: null # (null = any body type)
+
+      # Number of seats
+      seats:
+          min: null # Minimum seats (null = no minimum)
+          max: null # Maximum seats (null = no maximum)
+
+      # Fuel type codes:
+      # D = Diesel, B = Gasoline/Petrol, E = Electric, L = LPG, C = CNG
+      # H = Hybrid (Petrol/Electric), M = Hybrid (Diesel/Electric), O = Other
+      fuel_type: null # (null = any fuel type)
+
+      # Transmission type:
+      # A = Automatic, M = Manual, S = Semi-automatic
+      transmission: null # (null = any transmission)
+
+      # Number of doors
+      doors:
+          min: null # Minimum doors (null = no minimum)
+          max: null # Maximum doors (null = no maximum)
+
+      # Equipment/Features codes:
+      # 1 = Air conditioning, 2 = Alarm system, 3 = Alloy wheels, 4 = Bluetooth
+      # 5 = Central locking, 6 = Cruise control, 7 = Electric windows
+      # 8 = Heated seats, 9 = Navigation system, 10 = Parking sensors
+      # 11 = Power steering, 12 = Rain sensor, 13 = Start/stop system
+      # 14 = Sunroof, 15 = Tinted windows, 16 = Xenon headlights
+      # 17 = Leather seats, 18 = Roof rack, 19 = Sliding door
+      # 20 = Trailer hitch, 21 = Winter tires
+      equipment: [] # List of equipment codes (empty list = no specific equipment)
+
+      # Color codes:
+      # 0 = Not specified, 1 = Black, 2 = Blue, 3 = Brown, 4 = Beige
+      # 5 = Yellow, 6 = Grey, 7 = Green, 8 = Red, 9 = Silver, 10 = White
+      color: null # (null = any color)
+
+      # Power range in kW
+      power_range:
+          min: null # Minimum power in kW (null = no minimum)
+          max: null # Maximum power in kW (null = no maximum)
+
+      # Location search by ZIP code
+      zip: null # ZIP code to search around (null = no specific location)
+      zipr: null # Radius around ZIP code in km (null = default radius)
+
+general:
+    # How often to check for new listings (in minutes)
+    check_interval_minutes: 15
+
+    # Countries to search in
+    # Available country codes:
+    # AT = Austria, DE = Germany, BE = Belgium, ES = Spain
+    # FR = France, IT = Italy, LU = Luxembourg, NL = Netherlands
+    countries: ["DE"] # Default to Germany
+
+    # Notification type (currently only telegram is supported)
+    notification_type: "telegram"
