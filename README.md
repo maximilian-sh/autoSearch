@@ -8,6 +8,7 @@ A car listing crawler for AutoScout24 that monitors listings based on your searc
 -   Supports a wide range of search parameters (make, model, price, year, seats, etc.)
 -   Only extracts exact matching results, ignoring recommended vehicles
 -   Sends Telegram notifications for new listings with properly formatted titles
+-   Supports sending notifications to multiple Telegram users
 -   Automatically removes listings that are no longer available
 -   Runs continuously in the background
 -   Supports multiple configuration files for different search criteria
@@ -24,13 +25,15 @@ pip install -r requirements.txt
 
 ```
 TELEGRAM_BOT_TOKEN=your_bot_token_here
-TELEGRAM_CHAT_ID=your_chat_id_here
+TELEGRAM_CHAT_IDS=id1,id2,id3
 ```
 
 To get these values:
 
 -   Create a new bot using [@BotFather](https://t.me/botfather) on Telegram to get the `TELEGRAM_BOT_TOKEN`
--   Send a message to your bot and visit `https://api.telegram.org/bot<YourBOTToken>/getUpdates` to get your `TELEGRAM_CHAT_ID`
+-   Send a message to your bot and visit `https://api.telegram.org/bot<YourBOTToken>/getUpdates` to get the chat IDs
+-   For multiple users, add all chat IDs separated by commas (no spaces)
+-   For backward compatibility, you can also use `TELEGRAM_CHAT_ID` for a single user
 
 3. Configure your search parameters by creating one or more configuration files in the `config` directory. See the [Configuration](#configuration) section for details.
 

@@ -13,11 +13,15 @@ logger = logging.getLogger(__name__)
 class TelegramNotifier:
     def __init__(self):
         self.token = os.getenv('TELEGRAM_BOT_TOKEN')
-        self.chat_id = os.getenv('TELEGRAM_CHAT_ID')
-        if not self.token or not self.chat_id:
-            raise ValueError("TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID must be set in .env file")
         
-        logger.info(f"Initializing Telegram notifier with chat ID: {self.chat_id}")
+        # Support multiple chat IDs
+        chat_ids = os.getenv('TELEGRAM_CHAT_IDS', os.getenv('TELEGRAM_CHAT_ID', ''))
+        self.chat_ids = [chat_id.strip() for chat_id in chat_ids.split(',') if chat_id.strip()]
+        
+        if not self.token or not self.chat_ids:
+            raise ValueError("TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_IDS must be set in .env file")
+        
+        logger.info(f"Initializing Telegram notifier with {len(self.chat_ids)} chat ID(s)")
         self.app = Application.builder().token(self.token).build()
 
     async def notify_new_listing(self, listing: CarListing):
@@ -31,29 +35,31 @@ class TelegramNotifier:
         message = self._format_listing_message(listing)
         logger.info(f"Formatted message: {message}")
         
-        try:
-            # Send text-only message
-            async with self.app:
-                await self.app.bot.send_message(
-                    chat_id=self.chat_id,
-                    text=message,
-                    parse_mode='HTML',
-                    disable_web_page_preview=False
-                )
-            logger.info(f"Successfully sent notification for listing: {listing.id}")
-        except Exception as e:
-            logger.error(f"Failed to send Telegram notification: {e}")
-            # Try a simpler fallback message
+        # Send to all chat IDs
+        for chat_id in self.chat_ids:
             try:
+                # Send text-only message
                 async with self.app:
                     await self.app.bot.send_message(
-                        chat_id=self.chat_id,
-                        text=f"New listing: {listing.make} {listing.model}\n\nView at: {listing.url}",
+                        chat_id=chat_id,
+                        text=message,
+                        parse_mode='HTML',
                         disable_web_page_preview=False
                     )
-                logger.info(f"Sent simplified fallback notification for listing: {listing.id}")
-            except Exception as e2:
-                logger.error(f"Failed to send fallback notification: {e2}")
+                logger.info(f"Successfully sent notification for listing: {listing.id} to chat ID: {chat_id}")
+            except Exception as e:
+                logger.error(f"Failed to send Telegram notification to chat ID {chat_id}: {e}")
+                # Try a simpler fallback message
+                try:
+                    async with self.app:
+                        await self.app.bot.send_message(
+                            chat_id=chat_id,
+                            text=f"New listing: {listing.make} {listing.model}\n\nView at: {listing.url}",
+                            disable_web_page_preview=False
+                        )
+                    logger.info(f"Sent simplified fallback notification for listing: {listing.id} to chat ID: {chat_id}")
+                except Exception as e2:
+                    logger.error(f"Failed to send fallback notification to chat ID {chat_id}: {e2}")
 
     def _format_listing_message(self, listing: CarListing) -> str:
         # Format price
@@ -131,13 +137,15 @@ An error occurred during the search process:
 
 {datetime.now().strftime('%Y-%m-%d %H:%M')}"""
         
-        try:
-            async with self.app:
-                await self.app.bot.send_message(
-                    chat_id=self.chat_id,
-                    text=error_message,
-                    parse_mode='HTML'
-                )
-            logger.info("Successfully sent error notification")
-        except Exception as e:
-            logger.error(f"Failed to send error notification: {e}") 
+        # Send to all chat IDs
+        for chat_id in self.chat_ids:
+            try:
+                async with self.app:
+                    await self.app.bot.send_message(
+                        chat_id=chat_id,
+                        text=error_message,
+                        parse_mode='HTML'
+                    )
+                logger.info(f"Successfully sent error notification to chat ID: {chat_id}")
+            except Exception as e:
+                logger.error(f"Failed to send error notification to chat ID {chat_id}: {e}") 
